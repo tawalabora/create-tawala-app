@@ -1,0 +1,30 @@
+[build-system]
+requires = ["uv_build>=0.9.13,<0.10.0"]
+build-backend = "uv_build"
+
+[project]
+name = "create-tawala-app"
+version = "0.1.0"
+description = "Initialize / create a new tawala app."
+readme = "README.md"
+authors = [{ name = "Kevin Wasike Wakhisi", email = "kevin@tawalabora.space" }]
+requires-python = ">=3.12"
+dependencies = ["rich>=14.2.0"]
+
+[project.urls]
+Homepage = "https://github.com/tawalabora/create-tawala-app"
+Repository = "https://github.com/tawalabora/create-tawala-app"
+Issues = "https://github.com/tawalabora/create-tawala-app/issues"
+
+[project.scripts]
+create-tawala-app = "create_tawala_app:main"
+
+[dependency-groups]
+dev = [
+    "psycopg[binary,pool]>=3.2.13",
+    "tawala",
+    "vercel>=0.3.5",
+]
+
+[tool.uv.sources]
+tawala = { path = "../tawala" }

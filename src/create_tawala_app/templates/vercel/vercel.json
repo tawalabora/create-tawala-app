@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "export UV_LINK_MODE=copy; uv run djx build",
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/asgi" }]
+}

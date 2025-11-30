@@ -1,0 +1,141 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: "Target repository"
+        required: true
+        type: choice
+        options:
+          - pypi
+          - testpypi
+        default: "testpypi"
+      version:
+        description: "Version to publish (e.g., 1.0.0a1). Leave empty to use current project version."
+        required: false
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Determine version and repository (tag trigger)
+        if: github.event_name == 'push'
+        id: version-tag
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+          # Remove 'v' prefix for version parsing
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          TYPE="unknown"
+
+          if [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            TYPE="stable"
+          elif [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)a([0-9]+)$ ]]; then
+            TYPE="alpha"
+          elif [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)b([0-9]+)$ ]]; then
+            TYPE="beta"
+          elif [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)rc([0-9]+)$ ]]; then
+            TYPE="rc"
+          elif [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)(\.?)post([0-9]+)$ ]]; then
+            TYPE="post"
+          elif [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)(\.?)dev([0-9]+)$ ]]; then
+            TYPE="dev"
+          fi
+
+          if [[ "$TYPE" == "unknown" ]]; then
+            echo "Error: Could not parse version format: $VERSION"
+            exit 1
+          fi
+
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+
+          # Determine repository based on version type
+          if [[ "$TYPE" == "stable" || "$TYPE" == "post" ]]; then
+            REPO="pypi"
+          else
+            REPO="testpypi"
+          fi
+
+          echo "repository=$REPO" >> $GITHUB_OUTPUT
+          echo "Detected version type: $TYPE for $TAG"
+          echo "Target repository: $REPO"
+
+      - name: Determine version and repository (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        id: version-manual
+        run: |
+          REPO="${{ github.event.inputs.repository }}"
+          VERSION="${{ github.event.inputs.version }}"
+
+          if [[ -z "$VERSION" ]]; then
+            # Get version from uv if not specified
+            VERSION=$(uv version --short)
+            echo "Using current project version: $VERSION"
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "repository=$REPO" >> $GITHUB_OUTPUT
+          echo "Target repository: $REPO"
+          echo "Version: $VERSION"
+
+      - name: Set final outputs
+        id: config
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "version=${{ steps.version-tag.outputs.version }}" >> $GITHUB_OUTPUT
+            echo "repository=${{ steps.version-tag.outputs.repository }}" >> $GITHUB_OUTPUT
+            echo "type=${{ steps.version-tag.outputs.type }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ steps.version-manual.outputs.version }}" >> $GITHUB_OUTPUT
+            echo "repository=${{ steps.version-manual.outputs.repository }}" >> $GITHUB_OUTPUT
+            echo "type=manual" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build package
+        run: |
+          uv build
+          echo "Built packages:"
+          ls -lh dist/
+
+      - name: Publish to PyPI
+        if: steps.config.outputs.repository == 'pypi'
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          echo "Publishing version ${{ steps.config.outputs.version }} to PyPI..."
+          uv publish
+
+      - name: Publish to TestPyPI
+        if: steps.config.outputs.repository == 'testpypi'
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: |
+          echo "Publishing version ${{ steps.config.outputs.version }} to TestPyPI..."
+          uv publish --index testpypi
+
+      - name: Skip dev versions
+        if: steps.config.outputs.type == 'dev' && github.event_name == 'push'
+        run: |
+          echo "⚠️  Dev version detected - skipping publication"
+          echo "Dev versions are not published automatically"
+          exit 0

@@ -1,0 +1,12 @@
+# Ignore Python bytecode files
+__pycache__/
+
+# Ignore virtual environment folder
+/.venv/
+
+# Ignore distribution/build folders
+/dist/
+/build/
+
+# Keep your temporary files here
+/.tmp/
