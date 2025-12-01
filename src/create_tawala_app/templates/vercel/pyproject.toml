@@ -4,16 +4,26 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["tawala", "psycopg[binary,pool]>=3.2.13", "vercel>=0.3.5"]
+dependencies = [
+    "psycopg[binary,pool]>=3.2.13",
+    "tawala>=1.0.4",
+    "vercel>=0.3.5",
+]
+
+[project.urls]
+# Update accordingly
+homepage = "https://github.com/username-or-organization/tawala-project-template#readme"
+repository = "https://github.com/username-or-organization/tawala-project-template"
+issues = "https://github.com/username-or-organization/tawala-project-template/issues"
 
 [dependency-groups]
 dev = ["djlint>=1.36.4"]
 
 [tool.uv.sources]
-# TODO: Remove when django publishes the stable 6.0 release
-tawala = { git = "https://github.com/tawalabora/tawala.git" }
+tawala = { git = "https://github.com/tawalabora/tawala", tag = "v1.0.5.dev1" }
 
 [tool.tawala]
 allowed-hosts = ["localhost", "127.0.0.1"]
-secret-key = "django-insecure-change-me-in-production-via-envvar"
+secret-key = "django-insecure-change-me-in-production-here-or-via-envvar-to-keep-secret"
 storage = { backend = "vercel", token = "your-vercel-blob-token-here-or-via-envvar-to-keep-secret" }
+build = { commands = ["makemigrations", "migrate", "collectstatic --noinput"] }

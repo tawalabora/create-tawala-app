@@ -44,7 +44,7 @@ wheels = [
 
 [[package]]
 name = "create-tawala-app"
-version = "0.1.0"
+version = "1.0.5.dev1"
 source = { editable = "." }
 dependencies = [
     { name = "rich" },
@@ -63,7 +63,7 @@ requires-dist = [{ name = "rich", specifier = ">=14.2.0" }]
 [package.metadata.requires-dev]
 dev = [
     { name = "psycopg", extras = ["binary", "pool"], specifier = ">=3.2.13" },
-    { name = "tawala", directory = "../tawala" },
+    { name = "tawala", editable = "../tawala" },
     { name = "vercel", specifier = ">=0.3.5" },
 ]
 
@@ -447,8 +447,8 @@ wheels = [
 
 [[package]]
 name = "tawala"
-version = "1.0.3.dev1"
-source = { directory = "../tawala" }
+version = "1.0.5.dev1"
+source = { editable = "../tawala" }
 dependencies = [
     { name = "django" },
     { name = "django-browser-reload" },

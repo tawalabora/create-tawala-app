@@ -1,5 +1,3 @@
-from django.contrib import admin
-from .models import Portfolio
+# from django.contrib import admin
 
-admin.site.register(Portfolio)
-
+# Register your models here.

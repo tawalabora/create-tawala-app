@@ -43,10 +43,10 @@ class ProjectConfig:
 
     @property
     def repo_url(self) -> str:
-        """Return repository or homepage URL from TOML (raises ValueError if missing)."""
+        """Return repository URL from TOML (raises ValueError if missing)."""
         urls = self.load().get("project", {}).get("urls", {})
         # urls is expected to be mapping of str->str
-        url = urls.get("Repository") or urls.get("Homepage")
+        url = urls.get("repository")
         if not url:
             raise ValueError("No repository URL found in project.urls")
         return url
