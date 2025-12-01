@@ -125,17 +125,16 @@ jobs:
           echo "Publishing version ${{ steps.config.outputs.version }} to PyPI..."
           uv publish
 
+      - name: Skip dev versions notification
+        if: steps.config.outputs.type == 'dev' && github.event_name == 'push'
+        run: |
+          echo "⚠️  Dev version detected - skipping publication"
+          echo "Dev versions are not published automatically"
+
       - name: Publish to TestPyPI
-        if: steps.config.outputs.repository == 'testpypi'
+        if: steps.config.outputs.repository == 'testpypi' && steps.config.outputs.type != 'dev'
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
         run: |
           echo "Publishing version ${{ steps.config.outputs.version }} to TestPyPI..."
           uv publish --index testpypi
-
-      - name: Skip dev versions
-        if: steps.config.outputs.type == 'dev' && github.event_name == 'push'
-        run: |
-          echo "⚠️  Dev version detected - skipping publication"
-          echo "Dev versions are not published automatically"
-          exit 0
