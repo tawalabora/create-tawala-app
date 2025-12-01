@@ -20,9 +20,9 @@ issues = "https://github.com/username-or-organization/tawala-project-template/is
 dev = ["djlint>=1.36.4"]
 
 [tool.uv.sources]
-tawala = { git = "https://github.com/tawalabora/tawala", tag = "v1.0.5.dev1" }
+tawala = { git = "https://github.com/tawalabora/tawala", tag = "v1.0.5.dev2" }
 
-[tool.tawala]
+[tool.tawala] # * Tawala app project indicator. Do not remove.
 allowed-hosts = ["localhost", "127.0.0.1"]
 secret-key = "django-insecure-change-me-in-production-here-or-via-envvar-to-keep-secret"
 storage = { backend = "vercel", token = "your-vercel-blob-token-here-or-via-envvar-to-keep-secret" }
