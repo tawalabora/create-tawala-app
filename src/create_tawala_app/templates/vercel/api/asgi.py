@@ -1,5 +1,3 @@
-from tawala.conf.asgi import application
+from tawala.conf.management.api import asgi
 
-app = application
-
-__all__ = ["application", "app"]
+app = asgi.application

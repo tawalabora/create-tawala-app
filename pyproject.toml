@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "create-tawala-app"
-version = "1.0.5.dev1"
+version = "1.0.6.dev9"
 description = "Initialize / create a new tawala app."
 readme = "README.md"
 authors = [{ name = "Kevin Wasike Wakhisi", email = "kevin@tawalabora.space" }]
@@ -20,7 +20,19 @@ issues = "https://github.com/tawalabora/create-tawala-app/issues"
 create-tawala-app = "create_tawala_app:main"
 
 [dependency-groups]
-dev = ["psycopg[binary,pool]>=3.2.13", "tawala", "vercel>=0.3.5"]
+dev = [
+    "djlint>=1.36.4",
+    "pillow>=12.0.0",
+    "psycopg[binary,pool]>=3.2.13",
+    "tawala",
+    "vercel>=0.3.5",
+]
 
 [tool.uv.sources]
 tawala = { path = "../tawala", editable = true }
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true

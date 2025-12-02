@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "pillow>=12.0.0",
     "psycopg[binary,pool]>=3.2.13",
     "tawala>=1.0.4",
     "vercel>=0.3.5",
@@ -20,10 +21,19 @@ issues = "https://github.com/username-or-organization/tawala-project-template/is
 dev = ["djlint>=1.36.4"]
 
 [tool.uv.sources]
-tawala = { git = "https://github.com/tawalabora/tawala", tag = "v1.0.5.dev2" }
+tawala = { git = "https://github.com/tawalabora/tawala", tag = "v1.0.6.dev8" }
 
-[tool.tawala] # * Tawala app project indicator. Do not remove.
-allowed-hosts = ["localhost", "127.0.0.1"]
+[tool.tawala] # Tawala app project indicator. Do not remove section.
+allowed-hosts = ["127.0.0.1", "localhost"]
 secret-key = "django-insecure-change-me-in-production-here-or-via-envvar-to-keep-secret"
 storage = { backend = "vercel", token = "your-vercel-blob-token-here-or-via-envvar-to-keep-secret" }
-build = { commands = ["makemigrations", "migrate", "collectstatic --noinput"] }
+tailwind-cli = { path = "./.cli/tailwindcss.exe" } # Adjust accordingly
+commands = { build = [
+    "makemigrations",
+    "migrate",
+    "tailwind --build",
+    "collectstatic --noinput",
+] }
+
+[tool.djlint]
+# blank_line_after_tag = "extends,load"

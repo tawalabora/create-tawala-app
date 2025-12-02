@@ -6,7 +6,6 @@ __pycache__/
 
 # Ignore distribution/build folders
 /dist/
-/build/
 
 # Keep your temporary files here
 /.tmp/
