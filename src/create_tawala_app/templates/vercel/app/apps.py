@@ -1,5 +1,5 @@
-from tawala.conf.apps import AppConfig
+from tawala.conf.management.app import apps
 
 
-class TawalaAppConfig(AppConfig):
+class TawalaAppConfig(apps.AppConfig):
     verbose_name = "Tawala App"

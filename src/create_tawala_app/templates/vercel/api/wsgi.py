@@ -1,5 +1,3 @@
-from tawala.conf.wsgi import application
+from tawala.conf.management.api import wsgi
 
-app = application
-
-__all__ = ["application", "app"]
+app = wsgi.application

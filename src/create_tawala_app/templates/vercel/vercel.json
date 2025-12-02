@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "export UV_LINK_MODE=copy; uv run tawala tailwind -d -y",
   "buildCommand": "export UV_LINK_MODE=copy; uv run tawala build",
   "rewrites": [
     {
